@@ -1,3 +1,3 @@
-# Excercises to learn Elixir 
+# Exercises to learn Elixir 
 
-Collection of my solutions to Elixir excercises created by Johan Montelius.
+Collection of my solutions to Elixir exercises created by Johan Montelius.
