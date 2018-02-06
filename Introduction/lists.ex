@@ -66,4 +66,26 @@ defmodule Intro do
       false -> [head | addToList(x, tail)]
     end
   end
+
+  #removes x from the list supplied
+  def removeFromList(x, []) do [] end
+  def removeFromList(x, [head | tail]) do
+    case x==head do
+      true -> removeFromList(x, tail)
+      false -> [head | removeFromList(x, tail)]
+    end
+  end
+
+  #returns a list of unique elements
+  def unique([]) do [] end
+  def unique([head|tail]) do
+    [head | unique(removeFromList(head, tail))]
+  end
+
+  #reverses a list
+  #the ++ functionality appends the lists to each other
+  def reverse([]) do [] end
+  def reverse([head|tail]) do
+    reverse(tail) ++ [ head ]
+  end
 end
