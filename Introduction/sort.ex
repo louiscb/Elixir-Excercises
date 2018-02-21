@@ -16,28 +16,32 @@ defmodule Sort do
     end
   end
 
-  def mergesort([]) do [] end
-  def mergesort([head]) do [head] end
-  def mergesort(list) do
-    {listLeft, listRight} = msplit(list)
-    merge(mergesort(listLeft), mergesort(listRight))
+  # Merge sort algorithm
+  def msort(l) do
+    [head|tail] = l
+    case tail == [] do
+      true ->
+        head
+      false ->
+        {a, b} = msplit(l, [], [])
+        merge(msort(a), msort(b))
+    end
   end
 
-#a
-
-  def merge([], l2) do l2 end
-  def merge(l1, []) do l1 end
-  def merge([x1 | l1], [x2 | _] = l2) when x1 < x2 do
-    [x1 | merge(l1, l2)]
+  # [head|tail] != l for mergesort, you have to do the l1 l2 assignment
+  def merge(l, []) do l end
+  def merge([], r) do r end
+  def merge([leftHead|leftTail] = l1, [rightHead|rightTail] = l2) do
+    case leftHead < rightHead do
+      true ->
+        [ leftHead | merge(leftTail,l2) ]
+      false ->
+        [ rightHead | merge(l1, rightTail) ]
+    end
   end
-  def merge(l1, [x2 | l2]) do
-    [x2 | merge(l1, l2)]
-  end
 
-
-  def msplit(list) do msplit(list, [], []) end
-  def msplit([], left, right) do [left,right] end
-  def msplit([head|tail], left, right) do
-    msplit(tail, [head|right], left)
+  def msplit([], a, b) do {a, b} end
+  def msplit([head|tail], leftList, rightList) do
+      msplit(tail, rightList ++ [head], leftList)
   end
 end
