@@ -86,6 +86,18 @@ defmodule Intro do
   #the ++ functionality appends the lists to each other
   def reverse([]) do [] end
   def reverse([head|tail]) do
-    reverse(tail) ++ [ head ]
+    reverse(tail) ++ [head]
+  end
+
+  ## replace function that is tail recursive
+  def replace(l, elem, i) do
+    replace(l, elem, i, [])
+  end
+  def replace([], _, _, _) do [] end
+  def replace([h|t], elem, 0, acc) do
+     reverse(acc) ++ [elem] ++ t
+  end
+  def replace([h|t], elem, i, acc) do
+    replace(t, elem, i-1, [h|acc])
   end
 end
