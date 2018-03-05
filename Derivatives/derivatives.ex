@@ -1,3 +1,6 @@
+# finds derivative for equation you supply,
+# can only do very simple derivatives e.g 3x^2 + 4x
+
 defmodule Derivatives do
   #definitions on the atoms we use in the derive functions
   #these type and specifications don't impact the code
@@ -22,11 +25,6 @@ defmodule Derivatives do
         {:final, 4}
       }
 
-    simple =  {:power,
-                {:var, :x},
-                {:final, 1}
-              }
-
     #prints the expression in an ugly manner!
     #the maths is correct though
     derivative = derive(equation, :x)
@@ -50,7 +48,6 @@ defmodule Derivatives do
       }
     }
   end
-
   #product rule: dy/dx ab = a'b + ab'
   def derive({:multiply, a, b}, v) do
     {:add,
