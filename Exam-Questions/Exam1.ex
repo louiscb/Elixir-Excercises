@@ -125,4 +125,84 @@ defmodule Exam1 do
     end
     {:ok, value, rest}
   end
+
+  @doc """
+
+  Implement a procedure new/1 that creates a process that can work as a memory cell.
+  The argument to the procedure is the initial value of the cell.
+  The process should handle two messages: {swap, New, From} and {set, New}.
+  In the first case, the process that requested the update, From, receive a message in return {ok, Old},
+  where Old is the value the cell had before the update.
+  In the second case, no messages is returned.
+  """
+  def new(value) do
+    p = spawn(fn() -> cell(value) end)
+  end
+  def cell(value) do
+    receive do
+      {:swap, new, from} ->
+        send(from, {:ok, value})
+        cell(new)
+      {:set, new} ->
+        cell(new)
+    end
+  end
+
+  @doc """
+  A not so e cient way of implementing a lock is a so called spin-lock. The idea is to try to take the lock and keep trying until the lock is taken.
+  Assume that we have implemented the function new/1 in the previous question and we want to use the cell to implement a spin-lock.
+  Implement three procedures: create/0, lock/1 and release/1. The proce- dure create/0 should return a lock that lock/1 and release/1 can use.
+  The procedures lock/1 and release/1 shall return ok.
+  """
+  def create do
+    new(:open)
+  end
+
+  def lock(cell) do
+    case send(cell, {:swap, :taken, self()}) do
+      {:ok, :open} ->
+        :ok
+      {:ok, :taken} ->
+        lock(cell)
+    end
+  end
+
+  def release(cell) do
+    send(cell, {:set, :open})
+    :ok
+  end
+
+  @doc """
+  A spin-lock might do, but it more convenient to have a lock in form of a so called semaphore.
+  A semaphore is a construction where you can request a lock and the lock will be given to you when it is available.
+  If the lock is taken, you have to wait but you don't have to do anything or even be aware of that you're waiting.
+   A semaphore is also more general in that it can allow more than one process to hold the lock but it has a maximum value on how many processes.
+   If this value is 1 we call it a binary semaphore.
+  How shall we implement a semaphore in Erlang?
+  We could implement it as a process that can take two messages: {request, From} and release.
+  A process that that sends a request message will if/when there are locks available, receive a messages granted in return.
+  When the process is done in the critical section it should send a release message to the semaphore that then can hand the resource to the next process in line.
+  Implement the function new/1 that creates a semaphore with the given fun- ctionality.
+  The argument to the procedure is the number of resources that the semaphore controls.
+  """
+  def semaphore_new(n) do
+    spawn_link(fn -> semaphore(n) end)
+  end
+
+  defp semaphore(0) do
+    receive do
+      :release ->
+        semaphore(1)
+    end
+  end
+
+  defp semaphore(n) do
+    receive do
+      {:request, from} ->
+        send(from, :granted)
+        semaphore(n-1)
+      :release->
+        semaphore(n+1)
+    end
+  end
 end
